@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import days from "./data";
 const colors = [
   "papayawhip",
@@ -17,9 +17,53 @@ function App() {
   const [today, setToday] = useState({});
   const [vibe, setVibe] = useState("");
 
+
+  //function that does not update state on a component mounting (ex: page load)
+
+  // function getData(){
+  //   console.log("i'm getting data")
+  // }
+
+  useEffect(()=>{
+    setNumber(Math.floor(Math.random()* 100))
+    // getData()
+  }, [])
+
+  // Multiple useEffects
+  
+  useEffect(()=>{
+    setToday(days[index])
+    //set dependency that is dependant on the useEffect
+  }, [index])
+
   function handleOnChange(event) {
     setVibe(event.target.value);
   }
+  
+  useEffect(()=>{
+    console.log(vibe)
+  }, [vibe])
+
+//color changes when month changes
+
+  useEffect(()=>{
+    setColor(colors[index])
+  },[today.month, index])
+
+  function getFeaturedDog(){
+   let dogUrl = `https://dog.ceo/api/breeds/image/random`
+
+   fetch(dogUrl)
+   .then((res)=> res.json())
+   .then((x)=>setDog(x))
+   .catch((e)=> console.log(e))
+  }
+
+  useEffect(()=>{
+    getFeaturedDog()
+  }, [])
+
+
 
   function updateIndex() {
     setIndex((index + 1) % days.length);
@@ -47,7 +91,7 @@ function App() {
           <h5>{vibe}</h5>
         </div>
         <div className="dog">
-          <button>Change dog</button>
+          <button onClick={getFeaturedDog}>Change dog</button>
           <h2>Featured dog:</h2>
           <img src={dog.message} alt="Featured Dog" />
         </div>
